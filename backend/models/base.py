@@ -5,7 +5,6 @@ from datetime import datetime
 class BaseActivity(BaseModel):
     username: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
-    activity_type: str # from limited number of options
     
     # fields that will be calculated internally
     base_points: float | None = None # how many points an activity is worth
