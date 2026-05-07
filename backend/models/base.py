@@ -7,15 +7,11 @@ class BaseActivity(BaseModel):
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     activity_type: str # from limited number of options
     
-    # how many points an activity is worth
-    base_points: float = Field(gt=0)
-    # a calculation of points earned by user, level-based
-    points_earned: float = Field(gt=0)
-    
-    # how much CO2 saved (in lbs) for an activity
-    co2_saved: float = Field(gt=0)
+    # fields that will be calculated internally
+    base_points: float = Field(init=False) # how many points an activity is worth
+    points_earned: float = Field(init=False) # a calculation of points earned by user, level-based
+    co2_saved_lbs: float = Field(init=False)  # how much CO2 saved (in lbs) for an activity
 
 # represents fields that many activities also require
 class MeasuredActivity(BaseActivity):
-    # distance in miles they traveled
-    distance: float = Field(gt=0)
+    distance_mi: float = Field(gt=0) # distance in miles they traveled
