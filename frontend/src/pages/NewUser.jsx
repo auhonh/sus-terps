@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import {useDebugValue, useEffect, useState} from "react";
 
 function NewUser(){
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ function NewUser(){
     }
   };
     return (
-    <div id="new-user">
+    <div id="newuser">
         <h1>New User</h1>
 
         <input
