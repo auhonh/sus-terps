@@ -25,6 +25,8 @@ function Login(){
       if (response.ok) {
         // alert("Login successful");
         navigate("/userstats");
+        localStorage.setItem("user", JSON.stringify(data));
+
       } else {
         alert(data.detail);
       }

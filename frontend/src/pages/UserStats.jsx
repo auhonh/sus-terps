@@ -13,13 +13,14 @@ function UserStats(){
         const randomIdx = Math.floor(Math.random() * quotes.length);
         return quotes[randomIdx];
     })
+    const user = JSON.parse(localStorage.getItem("user"));
     return (<div>
-        <h1>Your Stats</h1>
+        <h1>Welcome, {user.username}</h1>
         <div id="quote">{quote}</div>
-        {/* <PieChart />
-        <ActivityForm />
+        <PieChart />
+        <ActivityForm user={user}/>
         <LeaderBoard />
-        <Badges /> */}
+        <Badges user={user}/>
     </div>)
 }
 

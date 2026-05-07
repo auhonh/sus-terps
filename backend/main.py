@@ -97,3 +97,8 @@ async def login(data: UserBase):
 @app.get("/user/{user_id}")
 async def get_profile(user_id: str):
     return {"name": "Test Terp", "points": 0}
+
+# returns the activities
+@app.get("/activities")
+def get_activities():
+    return [activity.value for activity in ActivityType]
