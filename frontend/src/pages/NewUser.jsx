@@ -37,7 +37,7 @@ function NewUser(){
     }
   };
     return (
-    <div id="newuser">
+    <div id="new-user">
         <h1>New User</h1>
 
         <input
