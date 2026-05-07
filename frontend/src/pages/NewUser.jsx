@@ -4,6 +4,7 @@ import {useDebugValue, useEffect, useState} from "react";
 function NewUser(){
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +23,7 @@ function NewUser(){
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          name: name,
           username: username,
           email: email,
           password: password,
@@ -36,7 +38,10 @@ function NewUser(){
 
         navigate("/login"); 
       } else {
-        alert(data.detail);
+        const errorMessage = typeof data.detail === "string" ?
+        data.detail : JSON.stringify(data.detail);
+        
+        alert(errorMessage);
       }
     } catch (error) {
       console.error(error);
@@ -46,6 +51,12 @@ function NewUser(){
     return (
     <div id="newuser">
         <h1>New User</h1>
+
+        <input
+        placeholder="Full Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
         <input
         placeholder="Username"
