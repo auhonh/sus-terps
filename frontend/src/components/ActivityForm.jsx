@@ -99,7 +99,7 @@ function ActivityForm({ user }) {
      UI
   ---------------------------- */
   return (
-    <div>
+    <div id="activityform">
       <h2>Log Activity</h2>
 
       {/* Activity dropdown */}
