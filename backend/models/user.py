@@ -21,4 +21,11 @@ class UserInDB(BaseModel):
 
     username: str
     hash_password: str
+
+# user information returned after successful login
+class UserPublic(BaseModel):
+    user_id: str
+    username: str
+    name: str
+    email: EmailStr
     

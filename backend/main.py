@@ -11,7 +11,7 @@ from dotenv import load_dotenv  # loads .env values into environment variables
 import os  # reads environment variables
 import bcrypt # to encrypt user passwords, salt and hash
 
-from models.user import UserCreate, UserInDB, UserBase
+from models.user import UserCreate, UserInDB, UserBase, UserPublic
 from models.base import BaseActivity
 
 
@@ -42,6 +42,16 @@ def verify_pw(plain_pw: str, hashed_pw: str) -> bool:
 )
 
 async def create_user(user: UserCreate):
+    # determining if user already exists before creating
+    user_exist = await user_coll.find_one({"$or": [{"email": user.email}, 
+    {"username": user.username}]})
+
+    if user_exist:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email or username provided is already registered. Attempt login instead."
+        )
+
     # hash and salt password for security
     hash_pw = create_hashed_pw(user.password)
 
@@ -58,11 +68,30 @@ async def create_user(user: UserCreate):
 @app.post(
     "/login",
     response_description="Check user credentials for login",
-    response_model=UserBase,
-    status_code=status.HTTP_202_ACCEPTED,
+    response_model=UserPublic,
+    status_code=status.HTTP_200_OK,
     response_model_by_alias=False,)
-async def login(credentials: dict):
-    # result = 
+async def login(data: UserBase):
+    # search for user in database
+    user = await user_coll.find_one({"username": data.username})
+
+    # handle user not in database
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username"
+        )
+
+    # verify password in association with username
+    if not verify_pw(data.password, user["hash_password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid password"
+        )
+
+    # ensure proper id is associated with the returned user
+    user["user_id"] = str(user["_id"])
+    return user
 
 @app.get("/user/{user_id}")
 async def get_profile(user_id: str):
