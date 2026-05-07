@@ -21,7 +21,6 @@ from models.activities import (
     Recycle, EWaste, EatVeganMeal, ColdShower,
     LaptopReduc, ReusableBag
 )
-from models.activities import MaterialType, ActivityRates
 
 ActivityUnion = Union[
     WalkCycle, ShuttleMetro, Carpool, Compost, 
@@ -147,26 +146,6 @@ async def log_activity(activity: DiscriminatoryUnion):
     "new_total": new_points, "level": new_level}
 
 
-# returns the activities
-@app.get("/activities")
-def get_activities():
-    return [
-        {
-            "key": activity.name,
-            "type": activity.value["type"]
-        }
-        for activity in ActivityRates
-    ]
-
-@app.get("/materials")
-def get_materials():
-    return [
-        {
-            "key": m.value,
-            "label": m.value.capitalize()
-        }
-        for m in MaterialType
-    ]
 @app.get(
     "/user/{username}",
     response_description="Retrieve user profile data and recent activity history",
