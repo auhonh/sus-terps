@@ -1,4 +1,5 @@
-import {useState} from "react";
+import {useDebugValue, useEffect, useState} from "react";
+import ActivityForm from "../components/ActivityForm";
 
 const quotes = [
     "Sustainability is a way of life, not a trend",
@@ -13,10 +14,28 @@ function UserStats(){
         const randomIdx = Math.floor(Math.random() * quotes.length);
         return quotes[randomIdx];
     })
-    const user = JSON.parse(localStorage.getItem("user"));
+
+    const [user, setUser] = useState(null);
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    
+    const fetchUser = () =>{
+        fetch('http://localhost:8000/user/${storedUser.username}').then((res) => res.json()).then((data)=>setUser(data));
+    };
+
+    useEffect(() => {
+        if (!storeUser) return;
+        fetchUser();
+    }, []);
+
     return (<div>
         <h1>Welcome, {user.username}</h1>
-        <div id="quote">{quote}</div>
+        <div id="quote"><h2>{quote}</h2></div>
+        <div id="stats">
+            <h3>🌱 Points: {user.total_points}</h3>
+            <h3>🌍 CO₂ Saved: {user.total_co2.toFixed(2)} lbs</h3>
+            <h3>⭐ Level: {user.level}</h3>
+        </div>
         <ActivityForm user={user}/>
     </div>)
 }
