@@ -14,24 +14,19 @@ import bcrypt # to encrypt user passwords, salt and hash
 
 from models.user import UserCreate, UserInDB, UserBase, UserPublic
 from models.base import BaseActivity
+from pydantic import model_validator
+
 from models.activities import (
     WalkCycle, ShuttleMetro, Carpool, Compost,
     Recycle, EWaste, EatVeganMeal, ColdShower,
     LaptopReduc, ReusableBag
 )
 
-ACTIVITY_MAP = {
-    "Walk/Cycle": WalkCycle,
-    "Shuttle/Metro": ShuttleMetro,
-    "Carpool": Carpool,
-    "Compost": Compost,
-    "Recycle": Recycle,
-    "E-Waste": EWaste,
-    "Eat Vegan": EatVeganMeal,
-    "Cold Shower": ColdShower,
-    "Reduce Laptop Time": LaptopReduc,
-    "Use a Reusable Bag": ReusableBag
-}
+ActivityUnion = Union[
+    WalkCycle, ShuttleMetro, Carpool, Compost, 
+    Recycle, EWaste, EatVeganMeal, ColdShower, 
+    LaptopReduc, ReusableBag
+]
 
 app = db_app # utilize app configured in database
 
@@ -113,32 +108,20 @@ async def login(data: UserBase):
 @app.post(
     "/log-activity",
     response_description="Log a new user activity and update statistics",
-    response_model=dict,
     status_code=status.HTTP_201_CREATED,
-    response_model_by_alias=False,
 )
-async def log_activity(payload: dict):
+async def log_activity(activity: ActivityUnion):
     # identify and validate activity
-    act_type = payload.get("activity_type")
-    if act_type not in ACTIVITY_MAP:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="Invalid activity type"
-        )
-    
-    activity_model = ACTIVITY_MAP[act_type]
-    # triggers @model_validator to calculate fields
-    activity_data = activity_model(**payload)
-    
-    # save activity to database
-    act_dict = activity_data.model_dump()
+    act_dict = activity.model_dump()
+
+    # record activity in collection
     await act_coll.insert_one(act_dict)
-    
+
     # update user statistics
-    points = activity_data.base_points or 0
-    co2 = activity_data.co2_saved_lbs or 0
+    points = activity.base_points or 0
+    co2 = activity.co2_saved_lbs or 0
     
-    user = await user_coll.find_one({"username": activity_data.username})
+    user = await user_coll.find_one({"username": activity.username})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -149,7 +132,7 @@ async def log_activity(payload: dict):
     new_level = int((new_points / 10)**0.5) + 1
     
     await user_coll.update_one(
-        {"username": activity_data.username},
+        {"username": activity.username},
         {"$set": {
             "total_points": new_points,
             "total_co2": new_co2,
@@ -157,7 +140,8 @@ async def log_activity(payload: dict):
         }}
     )
     
-    return {"status": "success", "points_earned": points, "new_total": new_points}
+    return {"status": "success", "points_earned": points, 
+    "new_total": new_points, "level": new_level}
 
 @app.get("/user/{user_id}")
 async def get_profile(user_id: str):
