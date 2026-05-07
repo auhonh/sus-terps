@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, status
 # for returning raw responses instead of JSON
 from fastapi.responses import Response
 
+import models.user
 from typing import List  # type hints in python
 from database import app as db_app, user_coll, act_coll
 from dotenv import load_dotenv  # loads .env values into environment variables
@@ -15,13 +16,13 @@ import bcrypt
 app = db_app # utilize app configured in database
 
 @app.post("/new-user", status_code=status.HTTP_201_CREATED)
-async def create_user(user: dict):
+async def create_user(user: UserCreate):
     # for "new user" page
     print(f"Creating user: {user}")
     return {"message": "user created"}
 
 @app.post("/login")
-async def login(credentials: dict):
+async def login(credentials: dict): 
     return {"message": "login successful"}
 
 @app.get("/user/{user_id}")
