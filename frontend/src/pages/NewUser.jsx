@@ -2,13 +2,19 @@ import { useNavigate } from "react-router-dom";
 import {useDebugValue, useEffect, useState} from "react";
 
 function NewUser(){
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSignup = async () => {
+    if(password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:8000/new-user", {
         method: "POST",
@@ -59,6 +65,17 @@ function NewUser(){
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+      {confirmPassword && password !== confirmPassword && (
+        <p id="matchPW">Passwords must match</p>
+      )}
 
 
         <button onClick={handleSignup}>Create Account</button>

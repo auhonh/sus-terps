@@ -212,6 +212,11 @@ body{
   justify-content: center;
 }
 
+#matchPW {
+  color: red; 
+  font-size: "12px"; 
+}
+
 h1, h2{
   color: rgb(99, 63, 9);
   font-family: 'Times New Roman', Times, serif;
