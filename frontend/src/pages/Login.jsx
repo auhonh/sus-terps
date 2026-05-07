@@ -23,7 +23,7 @@ function Login(){
       const data = await response.json();
 
       if (response.ok) {
-        alert("Login successful");
+        // alert("Login successful");
         navigate("/userstats");
       } else {
         alert(data.detail);
