@@ -22,6 +22,11 @@ class UserInDB(BaseModel):
     username: str
     hash_password: str
 
+    # for stats tracking
+    total_points: float = 0.0
+    total_co2: float = 0.0
+    level: int = 1
+
 # user information returned after successful login
 class UserPublic(BaseModel):
     user_id: str
