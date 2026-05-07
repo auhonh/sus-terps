@@ -17,10 +17,7 @@ function UserStats(){
     return (<div>
         <h1>Welcome, {user.username}</h1>
         <div id="quote">{quote}</div>
-        <PieChart />
         <ActivityForm user={user}/>
-        <LeaderBoard />
-        <Badges user={user}/>
     </div>)
 }
 

@@ -1,41 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+/* ---------------------------
+   HARD-CODED ACTIVITY LIST
+---------------------------- */
+const ACTIVITIES = [
+  { key: "WALK_CYCLE", type: "Walk/Cycle" },
+  { key: "SHUTTLE", type: "Shuttle/Metro" },
+  { key: "CARPOOL", type: "Carpool" },
+  { key: "COMPOST", type: "Compost" },
+  { key: "RECYCLE", type: "Recycle" },
+  { key: "E_WASTE", type: "E-Waste" },
+  { key: "VEGAN", type: "Eat Vegan" },
+  { key: "SHOWER", type: "Cold Shower" },
+  { key: "LAPTOP", type: "Reduce Laptop Time" },
+  { key: "BAG", type: "Use a Reusable Bag" },
+];
+
+/* -----------------
+   MATERIAL OPTIONS 
+-------------------- */
+const MATERIALS = ["plastic", "paper", "metal", "cardboard"];
 
 function ActivityForm({ user }) {
-  const [activities, setActivities] = useState([]);
-  const [materials, setMaterials] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState(
+    ACTIVITIES[0].key
+  );
 
-  const [selectedActivity, setSelectedActivity] = useState("");
   const [material, setMaterial] = useState("");
 
-  // shared inputs
   const [distance, setDistance] = useState("");
   const [minutes, setMinutes] = useState("");
   const [numPeople, setNumPeople] = useState("");
 
-  // ----------------------------
-  // LOAD ENUMS FROM BACKEND
-  // ----------------------------
-  useEffect(() => {
-    // activities enum
-    fetch("http://localhost:8000/activities")
-      .then(res => res.json())
-      .then(data => {
-        setActivities(data);
-        setSelectedActivity(data[0]?.key || "");
-      });
-
-    // materials enum
-    fetch("http://localhost:8000/materials")
-      .then(res => res.json())
-      .then(data => setMaterials(data));
-  }, []);
-
-  // ----------------------------
-  // SUBMIT ACTIVITY
-  // ----------------------------
+  /* ---------------------------
+     SUBMIT ACTIVITY
+  ---------------------------- */
   const submitActivity = async () => {
     if (!user) {
-      alert("User not found");
+      alert("No user found");
       return;
     }
 
@@ -44,12 +46,12 @@ function ActivityForm({ user }) {
       activity_type: selectedActivity,
     };
 
-    // add optional fields based on activity type
+    // optional fields depending on activity
     if (distance) payload.distance_mi = Number(distance);
     if (minutes) payload.minutes = Number(minutes);
     if (numPeople) payload.num_ppl = Number(numPeople);
 
-    // recycle requires material enum
+    // recycle requires material
     if (selectedActivity === "RECYCLE") {
       if (!material) {
         alert("Please select a material");
@@ -59,7 +61,7 @@ function ActivityForm({ user }) {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/log-activity", {
+      const res = await fetch("http://localhost:8000/log-activity", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,9 +69,9 @@ function ActivityForm({ user }) {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (response.ok) {
+      if (res.ok) {
         alert(`+${data.points_earned} points 🎉`);
 
         // reset form
@@ -86,29 +88,36 @@ function ActivityForm({ user }) {
     }
   };
 
-  // ----------------------------
-  // UI
-  // ----------------------------
+  /* ---------------------------
+     GET CURRENT ACTIVITY OBJECT
+  ---------------------------- */
+  const currentActivity = ACTIVITIES.find(
+    (a) => a.key === selectedActivity
+  );
+
+  /* ---------------------------
+     UI
+  ---------------------------- */
   return (
     <div>
       <h2>Log Activity</h2>
 
-      {/* ACTIVITY DROPDOWN */}
+      {/* Activity dropdown */}
       <select
         value={selectedActivity}
         onChange={(e) => setSelectedActivity(e.target.value)}
       >
-        {activities.map((act) => (
-          <option key={act.key} value={act.key}>
-            {act.label}
+        {ACTIVITIES.map((a) => (
+          <option key={a.key} value={a.key}>
+            {a.type}
           </option>
         ))}
       </select>
 
-      {/* DISTANCE INPUT */}
-      {(selectedActivity === "WALK_CYCLE" ||
-        selectedActivity === "SHUTTLE" ||
-        selectedActivity === "CARPOOL") && (
+      {/* Distance-based activities */}
+      {["WALK_CYCLE", "SHUTTLE", "CARPOOL"].includes(
+        selectedActivity
+      ) && (
         <input
           placeholder="Distance (miles)"
           value={distance}
@@ -116,7 +125,7 @@ function ActivityForm({ user }) {
         />
       )}
 
-      {/* SHOWER INPUT */}
+      {/* Shower */}
       {selectedActivity === "SHOWER" && (
         <input
           placeholder="Minutes"
@@ -125,7 +134,7 @@ function ActivityForm({ user }) {
         />
       )}
 
-      {/* CARPOOL INPUT */}
+      {/* Carpool */}
       {selectedActivity === "CARPOOL" && (
         <input
           placeholder="Number of people"
@@ -134,7 +143,7 @@ function ActivityForm({ user }) {
         />
       )}
 
-      {/* MATERIAL DROPDOWN (FROM ENUM) */}
+      {/* Recycle material dropdown */}
       {selectedActivity === "RECYCLE" && (
         <select
           value={material}
@@ -142,15 +151,15 @@ function ActivityForm({ user }) {
         >
           <option value="">Select material</option>
 
-          {materials.map((m) => (
-            <option key={m.key} value={m.key}>
-              {m.label}
+          {MATERIALS.map((m) => (
+            <option key={m} value={m}>
+              {m}
             </option>
           ))}
         </select>
       )}
 
-      {/* SUBMIT */}
+      {/* Submit button */}
       <button onClick={submitActivity}>
         Log Activity
       </button>
