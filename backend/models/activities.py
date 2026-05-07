@@ -96,8 +96,8 @@ class Recycle(BaseActivity):
 
         # handles case of None if material not in ActivityRates
         if material_rate:
-            self.base_points = config["points_per"]
-            self.co2_saved_lbs = config["co2_per"]
+            self.base_points = material_rate["points_per"]
+            self.co2_saved_lbs = material_rate["co2_per"]
 
         return self
     
