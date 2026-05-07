@@ -10,7 +10,7 @@ function Auth(){
             <button onClick={() => navigate("/login")}>
                 Login
             </button>
-            <button onClick={() => navigate("/newuser")}>
+            <button onClick={() => navigate("/new-user")}>
                 New User
             </button>
         </div>
