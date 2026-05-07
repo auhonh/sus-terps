@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import Response
 
 import models.user
-from typing import List, Union  # type hints in python
+from typing import List, Union, Annotated, Literal  # type hints in python
 from database import app as db_app, user_coll, act_coll
 from dotenv import load_dotenv  # loads .env values into environment variables
 
@@ -14,7 +14,7 @@ import bcrypt # to encrypt user passwords, salt and hash
 
 from models.user import UserCreate, UserInDB, UserBase, UserPublic
 from models.base import BaseActivity
-from pydantic import model_validator
+from pydantic import model_validator, Field
 
 from models.activities import (
     WalkCycle, ShuttleMetro, Carpool, Compost,
@@ -27,6 +27,8 @@ ActivityUnion = Union[
     Recycle, EWaste, EatVeganMeal, ColdShower, 
     LaptopReduc, ReusableBag
 ]
+
+DiscriminatoryUnion = Annotated[ActivityUnion, Field(discriminator="activity_type")]
 
 app = db_app # utilize app configured in database
 
@@ -110,12 +112,9 @@ async def login(data: UserBase):
     response_description="Log a new user activity and update statistics",
     status_code=status.HTTP_201_CREATED,
 )
-async def log_activity(activity: ActivityUnion):
+async def log_activity(activity: DiscriminatoryUnion):
     # identify and validate activity
     act_dict = activity.model_dump()
-
-    # record activity in collection
-    await act_coll.insert_one(act_dict)
 
     # update user statistics
     points = activity.base_points or 0
@@ -124,6 +123,9 @@ async def log_activity(activity: ActivityUnion):
     user = await user_coll.find_one({"username": activity.username})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
+    # record activity in collection
+    await act_coll.insert_one(act_dict)
     
     new_points = user.get("total_points", 0) + points
     new_co2 = user.get("total_co2", 0) + co2
@@ -143,9 +145,6 @@ async def log_activity(activity: ActivityUnion):
     return {"status": "success", "points_earned": points, 
     "new_total": new_points, "level": new_level}
 
-@app.get("/user/{user_id}")
-async def get_profile(user_id: str):
-    return {"name": "Test Terp", "points": 0}
 
 @app.get(
     "/user/{username}",

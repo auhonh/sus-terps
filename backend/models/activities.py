@@ -1,6 +1,7 @@
 from .base import BaseActivity, MeasuredActivity
 from pydantic import Field, model_validator
 from enum import Enum
+from typing import Literal
 
 ### stores the rates associated with each activity, leaving the math to the
 # classes themselves
@@ -38,28 +39,31 @@ class MaterialType(str, Enum):
     
 # specific activities that can be logged by the user
 class WalkCycle(MeasuredActivity):
+    activity_type: Literal["Walk/Cycle"] = "Walk/Cycle"
+
     @model_validator(mode="after")
     def calc_metrics(self) -> "WalkCycle":
         config = ActivityRates.WALK_CYCLE.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"] * self.distance_mi
         self.co2_saved_lbs = config["co2_per"] * self.distance_mi
 
         return self   
          
 class ShuttleMetro(MeasuredActivity):
+    activity_type: Literal["Shuttle/Metro"] = "Shuttle/Metro"
+
     @model_validator(mode="after")
     def calc_metrics(self) -> "ShuttleMetro":
         config = ActivityRates.SHUTTLE.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"] * self.distance_mi
         self.co2_saved_lbs = config["co2_per"] * self.distance_mi
 
         return self
     
 class Carpool(MeasuredActivity):
+    activity_type: Literal["Carpool"] = "Carpool"
     # number of people carpooling together
     num_ppl: int = Field(ge=2)
     
@@ -67,31 +71,31 @@ class Carpool(MeasuredActivity):
     def calc_metrics(self) -> "Carpool":
         config = ActivityRates.CARPOOL.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"] * (1 - (1/self.num_ppl)) * self.distance_mi
         self.co2_saved_lbs = config["co2_per"] * (1 - (1/self.num_ppl))
 
         return self
     
 class Compost(BaseActivity):
+    activity_type: Literal["Compost"] = "Compost"
+
     @model_validator(mode="after")
     def calc_metrics(self) -> "Compost":
         config = ActivityRates.COMPOST.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"]
         self.co2_saved_lbs = config["co2_per"]
 
         return self
    
 class Recycle(BaseActivity):
+    activity_type: Literal["Recycle"] = "Recycle"
     material: MaterialType
 
     @model_validator(mode="after")
     def calc_metrics(self) -> "Recycle":
         config = ActivityRates.RECYCLE.data # pulling stored rates
 
-        self.activity_type = config["type"]
         # getting rate based on material by accessing enum field
         material_rate = config["rates"].get(self.material.value)
 
@@ -103,6 +107,7 @@ class Recycle(BaseActivity):
         return self
     
 class EWaste(BaseActivity):
+    activity_type: Literal["E-Waste"] = "E-Waste"
     # how many GBs of cloud storage deleted
     gb_deleted: float = Field(gt=0)
     
@@ -110,37 +115,38 @@ class EWaste(BaseActivity):
     def calc_metrics(self) -> "EWaste":
         config = ActivityRates.E_WASTE.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"] * self.gb_deleted
         self.co2_saved_lbs = config["co2_per"] * self.gb_deleted
 
         return self
     
 class EatVeganMeal(BaseActivity):
+    activity_type: Literal["Eat Vegan"] = "Eat Vegan"
+
     @model_validator(mode="after")
     def calc_metrics(self) -> "EatVeganMeal":
         config = ActivityRates.VEGAN.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"]
         self.co2_saved_lbs = config["co2_per"]
 
         return self
 
 class ColdShower(BaseActivity):
+    activity_type: Literal["Cold Shower"] = "Cold Shower"
     minutes: int # length of shower in minutes
     
     @model_validator(mode="after")
     def calc_metrics(self) -> "ColdShower":
         config = ActivityRates.SHOWER.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"] * self.minutes
         self.co2_saved_lbs = config["co2_per"] * self.minutes
 
         return self
     
 class LaptopReduc(BaseActivity):
+    activity_type: Literal["Reduce Laptop Time"] = "Reduce Laptop Time"
     # how many hours less than usual did user spend on laptop
     hours_reduce: int = Field(ge=1, le=4)
 
@@ -148,18 +154,18 @@ class LaptopReduc(BaseActivity):
     def calc_metrics(self) -> "LaptopReduc":
         config = ActivityRates.LAPTOP.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"] * self.hours_reduce
         self.co2_saved_lbs = config["co2_per"] * self.hours_reduce
 
         return self
     
 class ReusableBag(BaseActivity):
+    activity_type: Literal["Use a Reusable Bag"] = "Use a Reusable Bag"
+
     @model_validator(mode="after")
     def calc_metrics(self) -> "ReusableBag":
         config = ActivityRates.BAG.data # pulling stored rates
 
-        self.activity_type = config["type"]
         self.base_points = config["points_per"]
         self.co2_saved_lbs = config["co2_per"]
 
