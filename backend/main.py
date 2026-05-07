@@ -55,7 +55,7 @@ def verify_pw(plain_pw: str, hashed_pw: str) -> bool:
 @app.post(
     "/new-user",
     response_description="Add new user",
-    response_model=UserInDB,
+    response_model=UserPublic,
     status_code=status.HTTP_201_CREATED,
     response_model_by_alias=False,
 )
@@ -81,7 +81,7 @@ async def create_user(user: UserCreate):
     result = await user_coll.insert_one(new_user.model_dump(exclude={"user_id"}))
     new_user.user_id = str(result.inserted_id) # record given id
 
-    return new_user
+    return UserPublic(**user_dict, user_id=str(result.inserted_id))
 
 @app.post(
     "/login",
@@ -184,3 +184,31 @@ def get_materials():
         }
         for m in MaterialType
     ]
+@app.get(
+    "/user/{username}",
+    response_description="Retrieve user profile data and recent activity history",
+    response_model=dict,
+    status_code=status.HTTP_200_OK
+)
+async def get_profile(username: str):
+    # grab user to provide information
+    user = await user_coll.find_one({"username": username})
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    # fetch recent history (last 10 activities), descending order
+    cursor = act_coll.find({"username": username}).sort("timestamp", -1).limit(10)
+    history = await cursor.to_list(length=10)
+    
+    # convert mongoDB ObjectIDs and datetime for JSON
+    for item in history:
+        item["_id"] = str(item["_id"])
+        item["timestamp"] = item["timestamp"].isoformat()
+
+    return {
+        "name": user["name"],
+        "total_points": user.get("total_points", 0),
+        "total_co2": user.get("total_co2", 0),
+        "level": user.get("level", 1),
+        "history": history
+    }
