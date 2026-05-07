@@ -1,14 +1,10 @@
 import os  # reads environment variables
-from typing import List  # type hints in python
 
-# create app, throw API errors, gives readable HTTP status codes
-from fastapi import FastAPI, HTTPException, status
+# create app
+from fastapi import FastAPI
 
 # allows backend to accept frontend requests
 from fastapi.middleware.cors import CORSMiddleware
-
-# for returning raw responses instead of JSON
-from fastapi.responses import Response
 
 from bson import ObjectId  # convert string IDs to ObjectIDs for MongoDB
 from pymongo import AsyncMongoClient
@@ -40,3 +36,4 @@ app.add_middleware(
 client = AsyncMongoClient(MONGO_URI)
 db = client[os.environ["DB_NAME"]]
 user_coll = db.get_collection("users")
+act_coll = db.get_collection("activities")
