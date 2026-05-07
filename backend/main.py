@@ -1,13 +1,16 @@
 from fastapi import FastAPI
-from database import app as db_app, user_coll, act_coll
-
-import os  # reads environment variables
-from dotenv import load_dotenv  # loads .env values into environment variables
 # create app, throw API errors, gives readable HTTP status codes
 from fastapi import FastAPI, HTTPException, status
 # for returning raw responses instead of JSON
 from fastapi.responses import Response
+
 from typing import List  # type hints in python
+from database import app as db_app, user_coll, act_coll
+from dotenv import load_dotenv  # loads .env values into environment variables
+
+import os  # reads environment variables
+import bcrypt
+
 
 app = db_app # utilize app configured in database
 
