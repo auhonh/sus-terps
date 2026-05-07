@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import Response
 
 import models.user
-from typing import List, Union, Annotated  # type hints in python
+from typing import List, Union, Annotated, Literal  # type hints in python
 from database import app as db_app, user_coll, act_coll
 from dotenv import load_dotenv  # loads .env values into environment variables
 

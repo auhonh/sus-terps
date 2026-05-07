@@ -1,6 +1,7 @@
 from .base import BaseActivity, MeasuredActivity
 from pydantic import Field, model_validator
 from enum import Enum
+from typing import Literal
 
 ### stores the rates associated with each activity, leaving the math to the
 # classes themselves
