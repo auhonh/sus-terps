@@ -19,6 +19,7 @@ from models.activities import (
     Recycle, EWaste, EatVeganMeal, ColdShower,
     LaptopReduc, ReusableBag
 )
+from models.activities import MaterialType, ActivityRates
 
 ACTIVITY_MAP = {
     "Walk/Cycle": WalkCycle,
@@ -166,4 +167,20 @@ async def get_profile(user_id: str):
 # returns the activities
 @app.get("/activities")
 def get_activities():
-    return [activity.value for activity in ActivityType]
+    return [
+        {
+            "key": activity.name,
+            "type": activity.value["type"]
+        }
+        for activity in ActivityRates
+    ]
+
+@app.get("/materials")
+def get_materials():
+    return [
+        {
+            "key": m.value,
+            "label": m.value.capitalize()
+        }
+        for m in MaterialType
+    ]
