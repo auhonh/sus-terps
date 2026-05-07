@@ -95,7 +95,7 @@ class Recycle(BaseActivity):
         material_rate = config["rates"].get(self.material.value)
 
         # handles case of None if material not in ActivityRates
-        if material_rates:
+        if material_rate:
             self.base_points = config["points_per"]
             self.co2_saved_lbs = config["co2_per"]
 
@@ -127,15 +127,15 @@ class EatVeganMeal(BaseActivity):
         return self
 
 class ColdShower(BaseActivity):
-    duration: int # length of shower in minutes
+    minutes: int # length of shower in minutes
     
     @model_validator(mode="after")
     def calc_metrics(self) -> "ColdShower":
         config = ActivityRates.SHOWER.data # pulling stored rates
 
         self.activity_type = config["type"]
-        self.base_points = config["points_per"] * minutes
-        self.co2_saved_lbs = config["co2_per"] * minutes
+        self.base_points = config["points_per"] * self.minutes
+        self.co2_saved_lbs = config["co2_per"] * self.minutes
 
         return self
     
@@ -148,8 +148,8 @@ class LaptopReduc(BaseActivity):
         config = ActivityRates.LAPTOP.data # pulling stored rates
 
         self.activity_type = config["type"]
-        self.base_points = config["points_per"] * hours_reduce
-        self.co2_saved_lbs = config["co2_per"] * hours_reduce
+        self.base_points = config["points_per"] * self.hours_reduce
+        self.co2_saved_lbs = config["co2_per"] * self.hours_reduce
 
         return self
     
