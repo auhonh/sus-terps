@@ -7,7 +7,7 @@ class ActivityRates(Enum):
     WALK_CYCLE = {"type": "Walk/Cycle", "points_per": 44.0, "co2_per": 0.88}
     SHUTTLE = {"type": "Shuttle/Metro", "points_per": 28.0, "co2_per": 0.55}
     CARPOOL = {"type": "Carpool", "points_per": 44.0, "co2_per": 0.44}
-    COMPOST = {"type": "Compost", "points_per": 6.0, "co2_per": 0}.11
+    COMPOST = {"type": "Compost", "points_per": 6.0, "co2_per": 0.11}
     RECYCLE = {"type": "Recycle", 
                "rates": {
                    "plastic": {"points_per": 8.0, "co2_per": 0.15},
@@ -37,8 +37,9 @@ class MaterialType(str, Enum):
     
 # specific activities that can be logged by the user
 class WalkCycle(MeasuredActivity):
-    @model_validator(mode="after")
-    def calc_metrics(self) -> "WalkCycle":
+    base_points: float = 777
+    # @model_validator(mode="after")
+    # def calc_metrics(self) -> "WalkCycle":
         
     
          
