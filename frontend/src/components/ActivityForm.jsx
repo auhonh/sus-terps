@@ -38,10 +38,32 @@ function ActivityForm({ onUpdate }) {
      SUBMIT ACTIVITY
   ---------------------------- */
   const submitActivity = async () => {
+  // setStatusMsg({ text: "", isError: false });
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
     setStatusMsg({ text: "No user found. Please log in.", isError: true });
+    return;
+  }
+
+  /* -- EMPTY FIELD CHECK -- */
+  // check if the field for the current selection is empty
+  const isDistanceAct = ["WALK_CYCLE", "SHUTTLE", "CARPOOL"].includes(selectedActivity);
+  
+  if (isDistanceAct && !distance) {
+    setStatusMsg({ text: "Please enter the distance", isError: true });
+    return;
+  }
+  if (selectedActivity === "SHOWER" && !minutes) {
+    setStatusMsg({ text: "Please enter the duration", isError: true });
+    return;
+  }
+  if (selectedActivity === "LAPTOP" && !minutes) {
+    setStatusMsg({ text: "Please enter the hours reduced", isError: true });
+    return;
+  }
+  if (selectedActivity === "RECYCLE" && !material) {
+    setStatusMsg({ text: "Please select a material", isError: true });
     return;
   }
 
@@ -157,7 +179,14 @@ function ActivityForm({ onUpdate }) {
       {/* Activity dropdown */}
       <select
         value={selectedActivity}
-        onChange={(e) => setSelectedActivity(e.target.value)}
+        onChange={(e) => {
+          setSelectedActivity(e.target.value);
+          setDistance("");
+          setMinutes("");
+          setNumPeople("");
+          setMaterial("");
+          setStatusMsg({ text: "", isError: false });
+        }}
       >
         {ACTIVITIES.map((a) => (
           <option key={a.key} value={a.key}>
