@@ -41,7 +41,7 @@ function UserStats(){
       </div>
 
       <div id="stats">
-        <div className="card">🌱 Points: {user.total_points}</div>
+        <div className="card">🌱 Points: {Number(user.total_points).toFixed(2)}</div>
         <div className="card">🌍 CO₂ Saved: {Number(user.total_co2).toFixed(2)} lbs</div>
         <div className="card">⭐ Level: {user.level}</div>
       </div>

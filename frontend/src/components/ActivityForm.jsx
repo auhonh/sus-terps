@@ -66,6 +66,11 @@ function ActivityForm({ onUpdate }) {
     return;
   }
 
+  if (selectedActivity === "CARPOOL" && !numPeople) {
+    setStatusMsg({ text: "Please enter number of people", isError: true });
+    return;
+  }
+
   const payload = {
     username: user.username,
     activity_type: currentActivity.type,
