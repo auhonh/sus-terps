@@ -52,9 +52,32 @@ function ActivityForm({ onUpdate }) {
 
 
     // optional fields depending on activity
-    if (distance) payload.distance_mi = Number(distance);
-    if (minutes) payload.minutes = Number(minutes);
-    if (numPeople) payload.num_ppl = Number(numPeople);
+    if (distance) {
+      const val = Number(distance);
+      if (isNaN(val) || val <= 0) {
+        setStatusMsg({ text: "Please enter a valid distance", isError: true });
+        return;
+      }
+      payload.distance_mi = val;
+    }
+    
+    if (minutes) {
+      const val = Number(minutes);
+      if (isNaN(val) || val <= 0) {
+        setStatusMsg({ text: "Please enter valid minutes", isError: true });
+        return;
+      }
+      payload.minutes = val;
+    }
+
+    if (numPeople) {
+      const val = Number(numPeople);
+      if (isNaN(val) || val <= 0) {
+        setStatusMsg({ text: "Please enter a valid number of people", isError: true });
+        return;
+      }
+      payload.num_ppl = Number(numPeople);
+    }
 
     // recycle requires material
     if (selectedActivity === "RECYCLE") {
@@ -134,6 +157,7 @@ function ActivityForm({ onUpdate }) {
         selectedActivity
       ) && (
         <input
+          type="number"
           placeholder="Distance (miles)"
           value={distance}
           onChange={(e) => setDistance(e.target.value)}
@@ -143,6 +167,7 @@ function ActivityForm({ onUpdate }) {
       {/* Shower */}
       {selectedActivity === "SHOWER" && (
         <input
+          type="number"
           placeholder="Minutes"
           value={minutes}
           onChange={(e) => setMinutes(e.target.value)}
@@ -152,6 +177,7 @@ function ActivityForm({ onUpdate }) {
       {/* Carpool */}
       {selectedActivity === "CARPOOL" && (
         <input
+          type="number"
           placeholder="Number of people"
           value={numPeople}
           onChange={(e) => setNumPeople(e.target.value)}
