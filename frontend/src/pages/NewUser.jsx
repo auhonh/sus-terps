@@ -46,7 +46,10 @@ function NewUser(){
         const errorMessage = typeof data.detail === "string" ?
         data.detail : JSON.stringify(data.detail);
         
-        setStatusMsg({text: errorMessage, isError: true});
+        setStatusMsg({text: "Infomation Invalid. Please try again.", isError: true});
+        setTimeout(() => {
+          setStatusMsg({text: "", isError: false});
+        }, 2000)
       }
     } catch (error) {
       console.error(error);

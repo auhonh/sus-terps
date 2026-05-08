@@ -38,7 +38,6 @@ function ActivityForm({ onUpdate }) {
      SUBMIT ACTIVITY
   ---------------------------- */
   const submitActivity = async () => {
-  // setStatusMsg({ text: "", isError: false });
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
