@@ -89,7 +89,7 @@ function NewUser(){
       )}
 
 
-        <button onClick={handleSignup}>Create Account</button>
+        <button className="btn-primary" onClick={handleSignup}>Create Account</button>
     </div>
     )
 }

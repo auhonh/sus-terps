@@ -7,12 +7,14 @@ function Auth(){
         <div id="Auth">
             <h2>Login to Get Started</h2>
 
-            <button onClick={() => navigate("/login")}>
+            <div className="button-group">
+                <button className="btn-primary" onClick={() => navigate("/login")}>
                 Login
-            </button>
-            <button onClick={() => navigate("/newuser")}>
+                </button>
+                <button className="btn-secondary" onClick={() => navigate("/newuser")}>
                 New User
-            </button>
+                </button>
+            </div>
         </div>
     )
 }
