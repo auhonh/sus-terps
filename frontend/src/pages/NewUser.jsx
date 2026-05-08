@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {useDebugValue, useEffect, useState, isError} from "react";
+import {useDebugValue, useEffect, useState} from "react";
 
 function NewUser(){
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ function NewUser(){
       }
     } catch (error) {
       console.error(error);
-      setStatusMsg({text: error.stringify, isError: true});
+      setStatusMsg({text: "Server error. Please try again.", isError: true});
     }
   };
     return (

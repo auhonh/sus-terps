@@ -67,6 +67,16 @@ button {
   gap: 20px;
 }
 
+#activityform select {
+  padding: 12px 20px;
+  border-radius: 25px;
+  border: 2px solid var(--dark-green);
+  background-color: white;
+  width: 290px; /* Slightly wider to accommodate dropdown arrows */
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 10px;
+}
+
 /* ensure inputs match buttons */
 #login input, #newuser input, #activityform input, select {
   padding: 12px 20px;

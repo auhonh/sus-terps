@@ -32,6 +32,8 @@ function ActivityForm({ onUpdate }) {
   const [minutes, setMinutes] = useState("");
   const [numPeople, setNumPeople] = useState("");
 
+  const [statusMsg, setStatusMsg] = useState({text: "", isError: false});
+
   /* ---------------------------
      SUBMIT ACTIVITY
   ---------------------------- */
@@ -39,7 +41,7 @@ function ActivityForm({ onUpdate }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
-    alert("No user found");
+    setStatusMsg({ text: "No user found. Please log in.", isError: true });
     return;
   }
 
@@ -57,7 +59,7 @@ function ActivityForm({ onUpdate }) {
     // recycle requires material
     if (selectedActivity === "RECYCLE") {
       if (!material) {
-        alert("Please select a material");
+        setStatusMsg({ text: "Please select a material", isError: true });
         return;
       }
       payload.material = material;
@@ -75,19 +77,22 @@ function ActivityForm({ onUpdate }) {
       const data = await res.json();
 
       if (res.ok) {
-        alert(`+${data.points_earned} points 🎉`);
+        setStatusMsg({ text: `+${data.points_earned} points earned! 🎉`, isError: false });
         onUpdate();
         // reset form
         setDistance("");
         setMinutes("");
         setNumPeople("");
         setMaterial("");
+
+        // auto clear success message
+        setTimeout(() => setStatusMsg({ text: "", isError: false }), 3000);
       } else {
-        alert(data.detail || "Error logging activity");
+        setStatusMsg({ text: data.detail || "Error logging activity", isError: true });
       }
     } catch (err) {
       console.error(err);
-      alert("Server error");
+      setStatusMsg({ text: "Server error. Try again.", isError: true });    
     }
   };
 
@@ -104,6 +109,13 @@ function ActivityForm({ onUpdate }) {
   return (
     <div id="activityform">
       <h2>Log Activity</h2>
+
+      {/* displaying status message if it's populated */}
+        {statusMsg.text && (
+          <p className = {statusMsg.isError ? "error-msg" : "success-msg"}>
+            {statusMsg.text}
+          </p>
+        )}
 
       {/* Activity dropdown */}
       <select

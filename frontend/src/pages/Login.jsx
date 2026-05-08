@@ -7,7 +7,9 @@ function Login(){
     const[username, setUsername] = useState("");
     const[password, setPassword] = useState("");
 
-     const handleLogin = async () => {
+    const [statusMsg, setStatusMsg] = useState({text: "", isError: false});
+
+    const handleLogin = async () => {
     try {
       const response = await fetch("http://localhost:8000/login", {
         method: "POST",
@@ -23,23 +25,33 @@ function Login(){
       const data = await response.json();
 
       if (response.ok) {
-        // alert("Login successful");
-        navigate("/userstats");
+        setStatusMsg({ text: "Login successful! Redirecting...", isError: false });
         localStorage.setItem("user", JSON.stringify(data));
 
+        setTimeout(() => {
+          navigate("/userstats");
+        }, 1000);
+
       } else {
-        alert(data.detail);
+        setStatusMsg({ text: data.detail || "Login failed", isError: true });
       }
 
     } catch (error) {
       console.error(error);
-      alert("Server error");
+      setStatusMsg({ text: "Server error. Please try again.", isError: true });
     }
   };
 
     return (
     <div id="login">
         <h1>Login</h1>
+
+        {/* displaying status message if it's populated */}
+        {statusMsg.text && (
+          <p className = {statusMsg.isError ? "error-msg" : "success-msg"}>
+            {statusMsg.text}
+          </p>
+        )}
 
         <input
             placeholder="Username"
