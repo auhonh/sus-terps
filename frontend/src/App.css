@@ -68,7 +68,7 @@ button {
 }
 
 /* ensure inputs match buttons */
-#login input, #newuser input {
+#login input, #newuser input, #activityform input, select {
   padding: 12px 20px;
   border-radius: 25px;
   border: 2px solid var(--dark-green);
@@ -76,6 +76,7 @@ button {
   background-color: white;
   width: 250px;
   font-family: 'Inter', sans-serif;
+  color: black;
 }
 
 /* text styling */
@@ -172,4 +173,34 @@ p{
 button:hover {
   transform: scale(1.05);
   opacity: 0.9;
+}
+
+
+/* statistics buttons*/
+#stats{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+/*stats buttons*/
+.card{
+  padding: 12px;
+  border-radius: 12px;
+  background-color: var(--dark-green);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 1);
+  min-width: 100px;
+  text-align: center;
+  color: white;
+}
+.card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+#activityform{
+  gap: 20px;
+  padding: 20px;
 }

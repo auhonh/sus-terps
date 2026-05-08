@@ -41,9 +41,9 @@ function UserStats(){
       </div>
 
       <div id="stats">
-        <button>🌱 Points: {user.total_points}</button>
-        <button>🌍 CO₂ Saved: {user.total_co2} lbs</button>
-        <button>⭐ Level: {user.level}</button>
+        <div className="card">🌱 Points: {user.total_points}</div>
+        <div className="card">🌍 CO₂ Saved: {user.total_co2} lbs</div>
+        <div className="card">⭐ Level: {user.level}</div>
       </div>
 
       <ActivityForm onUpdate={fetchUser}/>

@@ -163,7 +163,7 @@ function ActivityForm({ onUpdate }) {
       )}
 
       {/* Submit button */}
-      <button onClick={submitActivity}>
+      <button onClick={submitActivity} className="btn-primary">
         Log Activity
       </button>
     </div>
