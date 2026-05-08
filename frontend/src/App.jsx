@@ -19,7 +19,7 @@ function App() {
           <Auth />
           </div>} />
         <Route path="/login" element={<Login />} />
-        <Route path="/new-user" element={<NewUser />} />
+        <Route path="/newuser" element={<NewUser />} />
         <Route path="/userstats" element={<UserStats />} />
       </Routes>
     </BrowserRouter>
