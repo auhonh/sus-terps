@@ -141,6 +141,27 @@ p{
   background-color: rgb(151, 241, 139);
 } */
 
+.success-msg {
+  color: var(--dark-green);
+  background-color: #f0fff0;
+
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--dark-green);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.error-msg {
+  color: rgb(211, 15, 15); 
+  background-color: #fff0f0;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid rgb(211, 15, 15); 
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
 /* buttons */
 .button-group {
   display: flex;

@@ -10,9 +10,11 @@ function NewUser(){
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [statusMsg, setStatusMsg] = useState({text: "", isError: false});
+
   const handleSignup = async () => {
     if(password !== confirmPassword) {
-      alert("Passwords do not match!");
+      setStatusMsg({text: "Passwords do not match!", isError: true});
       return;
     }
 
@@ -33,24 +35,34 @@ function NewUser(){
       const data = await response.json();
 
       if (response.ok) {
-        alert("User created successfully!");
+        setStatusMsg({ text: "Account created! Redirecting to login...", 
+          isError: false });
         console.log("Created user:", data);
 
-        navigate("/login"); 
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } else {
         const errorMessage = typeof data.detail === "string" ?
         data.detail : JSON.stringify(data.detail);
         
-        alert(errorMessage);
+        setStatusMsg({text: errorMessage, isError: true});
       }
     } catch (error) {
       console.error(error);
-      alert("Server error");
+      setStatusMsg({text: error.stringify, isError: true});
     }
   };
     return (
     <div id="newuser">
         <h1>New User</h1>
+
+        {/* displaying status message if it's populated */}
+        {statusMsg.text && (
+          <p className = {statusMsg.isError ? "error-msg" : "success-msg"}>
+            {statusMsg.text}
+          </p>
+        )}
 
         <input
         placeholder="Full Name"
