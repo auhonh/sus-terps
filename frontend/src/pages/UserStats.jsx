@@ -15,29 +15,40 @@ function UserStats(){
         return quotes[randomIdx];
     })
 
-    const [user, setUser] = useState(null);
+     const [user, setUser] = useState(null);
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    
-    const fetchUser = () =>{
-        fetch('http://localhost:8000/user/${storedUser.username}').then((res) => res.json()).then((data)=>setUser(data));
-    };
+  const storedUser = JSON.parse(localStorage.getItem("user"));
 
-    useEffect(() => {
-        if (!storeUser) return;
-        fetchUser();
-    }, []);
+  const fetchUser = () => {
+    fetch(`http://localhost:8000/user/${storedUser.username}`)
+      .then((res) => res.json())
+      .then((data) => {setUser(data); });
+  };
 
-    return (<div>
-        <h1>Welcome, {user.username}</h1>
-        <div id="quote"><h2>{quote}</h2></div>
-        <div id="stats">
-            <h3>🌱 Points: {user.total_points}</h3>
-            <h3>🌍 CO₂ Saved: {user.total_co2.toFixed(2)} lbs</h3>
-            <h3>⭐ Level: {user.level}</h3>
-        </div>
-        <ActivityForm user={user}/>
-    </div>)
+  useEffect(() => {
+    if (!storedUser) return;
+    fetchUser();
+  }, []);
+
+  if (!user) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <h1>Welcome, {storedUser.username}</h1>
+
+      <div id="quote">
+        <h2>{quote}</h2>
+      </div>
+
+      <div id="stats">
+        <button>🌱 Points: {user.total_points}</button>
+        <button>🌍 CO₂ Saved: {user.total_co2} lbs</button>
+        <button>⭐ Level: {user.level}</button>
+      </div>
+
+      <ActivityForm onUpdate={fetchUser}/>
+    </div>
+  );
 }
 
 export default UserStats

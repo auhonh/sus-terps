@@ -21,7 +21,7 @@ const ACTIVITIES = [
 -------------------- */
 const MATERIALS = ["plastic", "paper", "metal", "cardboard"];
 
-function ActivityForm({ user }) {
+function ActivityForm({ onUpdate }) {
   const [selectedActivity, setSelectedActivity] = useState(
     ACTIVITIES[0].key
   );
@@ -36,15 +36,18 @@ function ActivityForm({ user }) {
      SUBMIT ACTIVITY
   ---------------------------- */
   const submitActivity = async () => {
-    if (!user) {
-      alert("No user found");
-      return;
-    }
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    const payload = {
-      username: user.username,
-      activity_type: selectedActivity,
-    };
+  if (!user) {
+    alert("No user found");
+    return;
+  }
+
+  const payload = {
+    username: user.username,
+    activity_type: currentActivity.type,
+  };
+
 
     // optional fields depending on activity
     if (distance) payload.distance_mi = Number(distance);
@@ -73,7 +76,7 @@ function ActivityForm({ user }) {
 
       if (res.ok) {
         alert(`+${data.points_earned} points 🎉`);
-
+        onUpdate();
         // reset form
         setDistance("");
         setMinutes("");
