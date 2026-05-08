@@ -50,6 +50,20 @@ function ActivityForm({ onUpdate }) {
     activity_type: currentActivity.type,
   };
 
+    // validation for time on laptop reduction
+    if (selectedActivity === "LAPTOP") {
+      const val = Number(minutes); // use minutes state, but capture hours
+      
+      if (!Number.isInteger(val) || val < 1 || val > 4) {
+        setStatusMsg({ 
+          text: "Please enter a whole number between 1 and 4 hours", 
+          isError: true 
+        });
+        return;
+      }
+      payload.hours_reduce = val; 
+    }
+
 
     // optional fields depending on activity
     if (distance) {
@@ -198,6 +212,16 @@ function ActivityForm({ onUpdate }) {
             </option>
           ))}
         </select>
+      )}
+
+      {/* Laptop Reduction */}
+      {selectedActivity === "LAPTOP" && (
+        <input
+          type="number"
+          placeholder="Hours reduced (1-4)"
+          value={minutes}
+          onChange={(e) => setMinutes(e.target.value)}
+        />
       )}
 
       {/* Submit button */}
